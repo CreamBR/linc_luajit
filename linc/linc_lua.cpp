@@ -2,7 +2,7 @@
 #include <hx/CFFI.h>
 
 #include "linc_lua.h"
-#include "lua.hpp"
+#include "../lib/lua/src/lua.hpp"
 
 namespace linc {
 	namespace lua {
