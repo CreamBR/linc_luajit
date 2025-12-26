@@ -6,7 +6,7 @@
 #include <sstream>
 #include <iostream>
 
-#include "lua.hpp"
+#include "../lib/lua/src/lua.hpp"
 
 namespace linc {
 	typedef ::cpp::Function<int(::cpp::Reference<lua_State>, ::String)> luaCallbackFN;
