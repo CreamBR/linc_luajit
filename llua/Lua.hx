@@ -523,81 +523,53 @@ extern class Lua {
 
 } //Lua
 
-
 class Lua_helper {
-
-	static inline function print_function(s:String) : Int { // you can use custom
-
-		// trace("\nLUA: " + s);
-		Lua_helper.trace(s);
-		return 0;
-
-	}
-
-	public static inline function register_hxtrace(l:State) : Void {
-
-		Lua.register_hxtrace_func(cpp.Callable.fromStaticFunction(print_function));
-		Lua.register_hxtrace_lib(l);
-
-	}
-
-	public static dynamic function trace(s:String, ?inf:haxe.PosInfos):Void {
-
-		trace(s);
-
-	}
-
 	public static var callbacks:Map<String, Dynamic> = new Map();
+	public static var sendErrorsToLua:Bool = true;
 
 	public static inline function add_callback(l:State, fname:String, f:Dynamic):Bool {
-
 		callbacks.set(fname, f);
 		Lua.add_callback_function(l, fname);
 		return true;
-
 	}
 
 	public static inline function remove_callback(l:State, fname:String):Bool {
-
 		callbacks.remove(fname);
 		Lua.remove_callback_function(l, fname);
 		return true;
-
 	}
 
-	public static var sendErrorsToLua:Bool = true;
 	public static inline function callback_handler(l:State, fname:String):Int {
-		try{
-
+		try {
 			var cbf = callbacks.get(fname);
 
-			if(cbf == null) return 0;
+			if (cbf == null)
+				return 0;
 
 			var nparams:Int = Lua.gettop(l);
 			var args:Array<Dynamic> = [];
 
-			for (i in 0...nparams) {
+			for (i in 0...nparams)
 				args[i] = Convert.fromLua(l, i + 1);
-			}
 
 			var ret:Dynamic = null;
-			/* return the number of results */
 
-			ret = Reflect.callMethod(null,cbf,args);
+			ret = Reflect.callMethod(null, cbf, args);
 
-			if(ret != null){
+			if (ret != null) {
 				Convert.toLua(l, ret);
 				return 1;
 			}
-		}catch(e:Dynamic){
-			if(sendErrorsToLua) {LuaL.error(l, 'CALLBACK ERROR! ${if(e.message != null) e.message else e}');return 0;}
+		} catch (e:Dynamic) {
+			if (sendErrorsToLua) {
+				LuaL.error(l, 'CALLBACK ERROR! ${if (e.message != null) e.message else e}');
+				return 0;
+			}
 			trace(e);
 			throw(e);
 		}
 		return 0;
-
-	} 
-
+	}
 }
 
 typedef Lua_Debug = {
