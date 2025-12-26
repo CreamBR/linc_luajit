@@ -1,23 +1,17 @@
 package llua;
 
-
-import llua.State;
-
-
-@:noCompletion
+@:include('lua.hpp')
+@:unreflective
 @:structAccess
-@:include('linc_lua.h') @:native("::luaL_Buffer")
-extern class LuaL_Buffer {
-
-    var p:String;    // current position in buffer
-    var lvl:Int;     // number of strings in the stack (level)
-    var L:State;        
-    var buffer:String;
-
+@:native("luaL_Buffer")
+extern class LuaL_Buffer
+{
+	var p:String;
+	var lvl:Int;
+	var l:llua.State;
+	var buffer:String;
 }
 
-@:include('linc_lua.h') @:native("::cpp::Reference<luaL_Buffer>")
-extern class BufferRef extends LuaL_Buffer {}
+typedef Buffer = cpp.Struct<LuaL_Buffer>;
 
-@:include('linc_lua.h') @:native("::cpp::Struct<luaL_Buffer>")
-extern class Buffer extends BufferRef {}
+typedef BufferRef = cpp.Reference<LuaL_Buffer>;
